@@ -1,6 +1,14 @@
 extensions:
 - name: dapr
 
+ingress:
+- name: ingress
+  bindings:
+    - port: 8080
+  rules:
+    - path: /
+      service: react-form
+
 services:
 - name: node-subscriber
   executable: node
