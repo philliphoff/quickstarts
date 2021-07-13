@@ -7,7 +7,10 @@ import flask
 from flask import request, jsonify
 from flask_cors import CORS
 import json
+import os
 import sys
+
+port = int(os.environ.get("PORT", 5000))
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -29,4 +32,4 @@ def c_subscriber():
     print('Received message "{}" on topic "{}"'.format(request.json['data']['message'], request.json['topic']), flush=True)
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
-app.run()
+app.run(host='0.0.0.0', port=port)

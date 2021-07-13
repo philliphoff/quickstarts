@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 const daprPort = process.env.DAPR_HTTP_PORT || 3500;
 const daprUrl = `http://localhost:${daprPort}/v1.0`;
-const port = 8080;
+const port = parseInt(process.env.PORT || '8080', 10);
 const pubsubName = 'pubsub';
 
 app.post('/publish', (req, res) => {
