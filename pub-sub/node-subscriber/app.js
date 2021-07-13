@@ -5,6 +5,32 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const bunyan = require('bunyan');
+const seq = require('bunyan-seq');
+
+for (var key of Object.keys(process.env)) {
+    console.log(key + ': ' + process.env[key]);
+}
+
+const seqProtocol = process.env.SEQ_SERVICE_PROTOCOL || 'http';
+const seqHost = process.env.SEQ_SERVICE_HOST || 'localhost';
+const seqPort = process.env.SEQ_SERVICE_PORT || '5341';
+const seqUrl = `${seqProtocol}://${seqHost}:${seqPort}`;
+
+const log = bunyan.createLogger({
+    name: 'node-subscriber',
+    streams: [
+      {
+        stream: process.stdout,
+        level: 'info'
+      },
+      seq.createStream({
+        serverUrl: seqUrl,        
+        level: 'info',
+        onError: () => { /* Ignore errors. */ }
+      })
+    ]
+  });
 
 const app = express();
 // Dapr publishes messages with the application/cloudevents+json content-type
@@ -28,13 +54,15 @@ app.get('/dapr/subscribe', (_req, res) => {
 });
 
 app.post('/A', (req, res) => {
-    console.log("A: ", req.body.data.message);
+    log.info({ event: "A", message: req.body.data.message }, '{event}: {message}');
     res.sendStatus(200);
 });
 
 app.post('/B', (req, res) => {
-    console.log("B: ", req.body.data.message);
+    log.info({ event: "B", message: req.body.data.message }, '{event}: {message}');
     res.sendStatus(200);
 });
 
-app.listen(port, () => console.log(`Node App listening on port ${port}!`));
+app.listen(port, () => {
+    log.info({ port }, 'Node App listening on port {port}!');
+});
