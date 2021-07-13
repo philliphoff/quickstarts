@@ -8,10 +8,6 @@ const bodyParser = require('body-parser');
 const bunyan = require('bunyan');
 const seq = require('bunyan-seq');
 
-for (var key of Object.keys(process.env)) {
-    console.log(key + ': ' + process.env[key]);
-}
-
 const seqProtocol = process.env.SEQ_SERVICE_PROTOCOL || 'http';
 const seqHost = process.env.SEQ_SERVICE_HOST || 'localhost';
 const seqPort = process.env.SEQ_SERVICE_PORT || '5341';
